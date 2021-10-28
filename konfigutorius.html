@@ -11,20 +11,21 @@
 			<div class="insideBackground">
 
 
-			<select class="inputSelect">
+			<select class="inputSelect" id="inputSelect">
 				<option
 				id="op1"
-				value="dasdas"
+				value="wood1"
 				>
-
+				Wood1
 				</option>
 				<option
-				op="op2"go
+				id="op2"
+				value="wood2"
 				>
-				asdasd	
+				Wood2	
 				</option>
 			</select>
-			<div style="color: black">dabar:  <input id="naujas" value="testas"></input></div>
+			<div class="result" style="color: black">dabar:<div id="result"></div></div>
 
 		</div>
 		</div>
@@ -38,13 +39,14 @@
 			import * as THREE from '../build/three.module.js';
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
 			import { PLYExporter } from './jsm/exporters/PLYExporter.js';
-
+			var object;
 			let scene, camera, renderer, exporter, mesh;
 			const raycaster = new THREE.Raycaster();
 			const mouse = new THREE.Vector2();
 			const pointer = new THREE.Vector2();
 			init();
 			animate();
+			
 			
 			function init() {
 			
@@ -128,11 +130,11 @@
 				// mesh.position.y = 30;
 				// scene.add(mesh)
 
-
+				//Apatinės lentynos
 
 				for (let h = 0; h <= 200; h=h+50)
 				{
-					var cubeMaterials=[
+					var cubeMaterials1=[
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
@@ -140,7 +142,7 @@
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 				]
-				const materialCube = new THREE.MeshFaceMaterial( cubeMaterials );
+				const materialCube = new THREE.MeshFaceMaterial( cubeMaterials1 );
 
 					mesh = new THREE.Mesh( geometry.clone(), materialCube );
 					mesh.position.x = h;
@@ -167,7 +169,10 @@
 
 				}
 			
-  var selectedObject;
+
+
+			
+  					var selectedObject;
 
 
 			
@@ -178,15 +183,15 @@
 				const material1 = new THREE.MeshPhongMaterial( { color: 0x00ff00 } );
 
 
-		
+				//Šaldytuvas
 				edges = new THREE.EdgesGeometry( geometry1 );
 				line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
 				line.position.x= 250;
 				line.position.y= 50;
 				scene.add( line );
 
-
-
+				
+				//Viršutinės lentynos
 				for (let h = 0; h < 250; h=h+50)
 				{
 					mesh = new THREE.Mesh( geometry.clone(), material );
@@ -212,7 +217,7 @@
 					line2 = new THREE.Line( lineBundle, lineMat );
 					scene.add( line2 );
 				}
-				var cubeMaterials=[
+				var cubeMaterials2=[
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
@@ -220,40 +225,31 @@
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
 				]
+
+
+
+
 				function onPointerMove( event ) { // ONCLICKAS
 
-
-
-				
-				
-
-				const materialCube = new THREE.MeshFaceMaterial( cubeMaterials );
-
-
-
-
-
+				//const materialCube = new THREE.MeshFaceMaterial( cubeMaterials );
 
 					raycaster.setFromCamera( mouse, camera );
 
 					// calculate objects intersecting the picking ray
 					const intersects = raycaster.intersectObjects( scene.children );
 
-					for ( let i = 0; i < intersects.length; i ++ ) {
-						var element = document.getElementById("naujas");
+					//for ( let i = 0; i <script intersects.length; i ++ ) {
+						var element = document.getElementById("result")
 						console.log(intersects)
 						
-						element.value = intersects[ 0 ].object.material[0].map.image.src
-						const geometry1 = new THREE.BoxGeometry( 50,50,50 );
+						var array = intersects[ 0 ].object.material[0].map.image.src.split('/');
+						array = array[array.length-1];
+						object = intersects[ 0 ].object;
+						selectedObject = object.id;
+						console.log(object.id)
+						element.textContent = array.substring(0, array.length-4);
+						document.getElementById('inputSelect').value = array.substring(0, array.length-4);
 
-
-						mesh = new THREE.Mesh( geometry1, materialCube );
-						mesh.position.set(intersects[0].object.position.x, intersects[0].object.position.y,intersects[0].object.position.z)
-			
-						
-						scene.remove(intersects[0].object)
-						scene.add( mesh );
-						render()
 						// e.color.set( 0xff0000 )
 
 						// e.map.image.src = "http://127.0.0.1:5500/three.js/examples/textures/wood2.jpg"
@@ -263,8 +259,7 @@
 						
 						// 
 
-					}
-				console.log(intersects.length)
+					//}
 				pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 				pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
@@ -288,6 +283,37 @@
 				//Events
 				document.addEventListener( 'click', onPointerMove );
 				window.addEventListener( 'resize', onWindowResize );
+				//OnChange eventas
+				const selectElement = document.querySelector('.inputSelect');
+
+				selectElement.addEventListener('change', (event) => {
+				
+				var objektas = scene.getObjectById(selectedObject,true);
+				
+				const geometry1 = new THREE.BoxGeometry( 50,50,50 );
+				if(event.target.value=="wood1") {
+				
+				mesh = new THREE.Mesh( geometry1, cubeMaterials1 );
+				mesh.position.set(objektas.position.x, objektas.position.y, objektas.position.z)
+				//copy geo
+				scene.remove(objektas)
+				scene.add( mesh );
+				selectedObject = mesh.id;
+				render()
+				}
+				else if(event.target.value=="wood2") {
+				mesh = new THREE.Mesh( geometry1, cubeMaterials2 );
+				mesh.position.set(objektas.position.x, objektas.position.y, objektas.position.z)
+				//copy geo
+				scene.remove(objektas)
+				scene.add( mesh );
+				selectedObject = mesh.id;
+				render()
+				}
+				//const result = document.querySelector('.result');
+				//result.textContent = event.target.value;
+
+				});
 				// const buttonExportASCII = document.getElementById( 'exportASCII' );
 				// buttonExportASCII.addEventListener( 'click', exportASCII );
 
@@ -318,13 +344,14 @@
 
 			function onMouseMove( event ) {
 
-// calculate mouse position in normalized device coordinates
-// (-1 to +1) for both components
+				// calculate mouse position in normalized device coordinates
+				// (-1 to +1) for both components
 
-mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
-}
+				}
+
 			window.addEventListener( 'mousemove', onMouseMove, false );
 
 			
@@ -334,6 +361,10 @@ mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 				
 				render()
 			}
+
+
+
+
 			function render(){
 				
 				
