@@ -11,7 +11,7 @@
 			<div class="insideBackground">
 
 
-			<select class="inputSelect" id="inputSelect">
+			<div style="display: inline"><select class="inputSelect" id="inputSelect">
 				<option
 				id="op1"
 				value="wood1"
@@ -24,7 +24,7 @@
 				>
 				Wood2	
 				</option>
-			</select>
+			</select><div id="clearMat" style="color: black; display: inline; margin-left:20px">X</div></div>
 			<div class="result" style="color: black">dabar:<div id="result"></div></div>
 
 		</div>
@@ -130,11 +130,8 @@
 				// mesh.position.y = 30;
 				// scene.add(mesh)
 
-				//Apatinės lentynos
-
-				for (let h = 0; h <= 200; h=h+50)
-				{
-					var cubeMaterials1=[
+				//Meterials
+				var cubeMaterials1=[
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
@@ -142,9 +139,27 @@
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood1.jpg'),side: THREE.DoubleSide}),
 				]
+
+				var cubeMaterials2=[
+					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
+					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
+					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
+					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
+					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
+					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
+				]
+
+				var cubeMaterial3 = new THREE.MeshBasicMaterial({color: 0xffffff})
+				//Apatinės lentynos
+
+				for (let h = 0; h <= 200; h=h+50)
+				{
+					
 				const materialCube = new THREE.MeshFaceMaterial( cubeMaterials1 );
 
-					mesh = new THREE.Mesh( geometry.clone(), materialCube );
+					mesh = new THREE.Mesh( geometry.clone(), cubeMaterial3 );
+					mesh.material.transparent = true;
+					mesh.material.opacity = 0.4;
 					mesh.position.x = h;
 					mesh.castShadow = true;
 					mesh.position.y = 25;
@@ -194,11 +209,11 @@
 				//Viršutinės lentynos
 				for (let h = 0; h < 250; h=h+50)
 				{
-					mesh = new THREE.Mesh( geometry.clone(), material );
+					mesh = new THREE.Mesh( geometry, cubeMaterial3 );
 					mesh.position.x = h;
 					mesh.castShadow = true;
-					mesh.position.y = 100;
-					// scene.add( mesh );
+					mesh.position.y = 125;
+					scene.add( mesh );
 					edges = new THREE.EdgesGeometry( geometry );
 					line = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 } ) );
 					line.position.x= h;
@@ -217,14 +232,7 @@
 					line2 = new THREE.Line( lineBundle, lineMat );
 					scene.add( line2 );
 				}
-				var cubeMaterials2=[
-					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
-					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
-					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
-					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
-					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
-					new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('textures/wood2.jpg'),side: THREE.DoubleSide}),
-				]
+				
 
 
 
@@ -241,15 +249,26 @@
 					//for ( let i = 0; i <script intersects.length; i ++ ) {
 						var element = document.getElementById("result")
 						console.log(intersects)
-						
-						var array = intersects[ 0 ].object.material[0].map.image.src.split('/');
+						if(intersects[0].object.id!=10){
+						try{var array = intersects[ 0 ].object.material[0].map.image.src.split('/');
 						array = array[array.length-1];
+						
 						object = intersects[ 0 ].object;
 						selectedObject = object.id;
 						console.log(object.id)
 						element.textContent = array.substring(0, array.length-4);
-						document.getElementById('inputSelect').value = array.substring(0, array.length-4);
+						if (array.substring(0, array.length-4) != " "){
+							document.getElementById('inputSelect').value = array.substring(0, array.length-4);
+						}
+						
+						}
 
+						catch(e) {
+							object = intersects[ 0 ].object;
+							selectedObject = object.id;
+							document.getElementById('inputSelect').value = "nothing";
+						}
+						}
 						// e.color.set( 0xff0000 )
 
 						// e.map.image.src = "http://127.0.0.1:5500/three.js/examples/textures/wood2.jpg"
@@ -281,10 +300,24 @@
 
 				//STATS
 				//Events
+				var clearX = document.getElementById("clearMat");
+				clearX.addEventListener( 'click', clearMat );
 				document.addEventListener( 'click', onPointerMove );
 				window.addEventListener( 'resize', onWindowResize );
 				//OnChange eventas
 				const selectElement = document.querySelector('.inputSelect');
+
+				function clearMat( event ) {
+				var objektas = scene.getObjectById(selectedObject,true);
+				mesh = new THREE.Mesh( geometry, cubeMaterial3 );
+				mesh.position.set(objektas.position.x, objektas.position.y, objektas.position.z)
+				//copy geo
+				scene.remove(objektas)
+				scene.add( mesh );
+				selectedObject = mesh.id;
+				render()
+				}
+
 
 				selectElement.addEventListener('change', (event) => {
 				
@@ -292,7 +325,7 @@
 				
 				const geometry1 = new THREE.BoxGeometry( 50,50,50 );
 				if(event.target.value=="wood1") {
-				
+				console.log(objektas)
 				mesh = new THREE.Mesh( geometry1, cubeMaterials1 );
 				mesh.position.set(objektas.position.x, objektas.position.y, objektas.position.z)
 				//copy geo

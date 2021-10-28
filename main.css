@@ -97,7 +97,7 @@ a, button, input, select {
 }
 .inputSelect{
 	height:32px;
-	width: 100%;
+	width: 80%;
 	border-radius:10px;
 	color: gray;
 }
